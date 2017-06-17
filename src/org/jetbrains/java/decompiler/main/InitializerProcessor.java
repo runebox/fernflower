@@ -38,7 +38,9 @@ public class InitializerProcessor {
 
     MethodWrapper meth = wrapper.getMethodWrapper(CodeConstants.CLINIT_NAME, "()V");
     if (meth != null && meth.root != null) {  // successfully decompiled static constructor
-      //extractStaticInitializers(wrapper, meth);
+      if (wrapper.getClassStruct().hasModifier(CodeConstants.ACC_ENUM)) {
+        extractStaticInitializers(wrapper, meth);
+      }
     }
 
     //extractDynamicInitializers(wrapper);
