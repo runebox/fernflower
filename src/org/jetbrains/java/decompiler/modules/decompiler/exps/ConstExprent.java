@@ -28,12 +28,13 @@ import org.jetbrains.java.decompiler.struct.match.MatchNode;
 import org.jetbrains.java.decompiler.struct.match.IMatchable.MatchProperties;
 import org.jetbrains.java.decompiler.struct.match.MatchNode.RuleValue;
 import org.jetbrains.java.decompiler.util.InterpreterUtil;
+import org.jetbrains.java.decompiler.util.TextUtil;
 
 import java.util.*;
 import java.util.Map.Entry;
 
 public class ConstExprent extends Exprent {
-  private static final Map<Integer, String> ESCAPES = new HashMap<Integer, String>() {{
+  private static final Map<Integer, String> CHAR_ESCAPES = new HashMap<Integer, String>() {{
     put(new Integer(0x8), "\\b");   /* \u0008: backspace BS */
     put(new Integer(0x9), "\\t");   /* \u0009: horizontal tab HT */
     put(new Integer(0xA), "\\n");   /* \u000a: linefeed LF */
@@ -127,17 +128,17 @@ public class ConstExprent extends Exprent {
           return new TextBuffer(Boolean.toString(((Integer)value).intValue() != 0));
         case CodeConstants.TYPE_CHAR:
           Integer val = (Integer)value;
-          String ret = ESCAPES.get(val);
+          String ret = CHAR_ESCAPES.get(val);
           if (ret == null) {
             char c = (char)val.intValue();
-            if (c >= 32 && c < 127 || !ascii && InterpreterUtil.isPrintableUnicode(c)) {
+            if (isPrintableAscii(c) || !ascii && TextUtil.isPrintableUnicode(c)) {
               ret = String.valueOf(c);
             }
             else {
-              ret = InterpreterUtil.charToUnicodeLiteral(c);
+              ret = TextUtil.charToUnicodeLiteral(c);
             }
           }
-          return new TextBuffer(ret).enclose("\'", "\'");
+          return new TextBuffer(ret).enclose("'", "'");
         case CodeConstants.TYPE_BYTE:
         case CodeConstants.TYPE_BYTECHAR:
         case CodeConstants.TYPE_SHORT:
@@ -306,7 +307,7 @@ public class ConstExprent extends Exprent {
           buffer.append("\\\'");
           break;
         default:
-          if (c >= 32 && c < 127 || !ascii && InterpreterUtil.isPrintableUnicode(c)) {
+          if (c >= 32 && c < 127 || !ascii && TextUtil.isPrintableUnicode(c)) {
             buffer.append(c);
           }
           else {
@@ -393,7 +394,7 @@ public class ConstExprent extends Exprent {
     // BYTECHAR and SHORTCHAR => CHAR in the CHAR context
     if (expectedType.equals(VarType.VARTYPE_CHAR) &&
             (constType.equals(VarType.VARTYPE_BYTECHAR) || constType.equals(VarType.VARTYPE_SHORTCHAR))) {
-      if (getIntValue() != 0) {
+      if (isPrintableAscii(getIntValue())) {
         setConstType(VarType.VARTYPE_CHAR);
       }
     }
@@ -403,6 +404,11 @@ public class ConstExprent extends Exprent {
       setConstType(VarType.VARTYPE_INT);
     }
   }
+
+  private static boolean isPrintableAscii(int c) {
+    return c >= 32 && c < 127;
+  }
+
 
   public Object getValue() {
     return value;
