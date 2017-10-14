@@ -459,6 +459,11 @@ public class ClassWriter {
       }
       else {
         buffer.append(" = ");
+
+        if (initializer.type == Exprent.EXPRENT_CONST) {
+          ((ConstExprent) initializer).adjustConstType(fieldType);
+        }
+
         // FIXME: special case field initializer. Can map to more than one method (constructor) and bytecode intruction.
         buffer.append(initializer.toJava(indent, tracer));
       }
