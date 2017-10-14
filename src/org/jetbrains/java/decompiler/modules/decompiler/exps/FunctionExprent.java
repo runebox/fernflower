@@ -454,9 +454,19 @@ public class FunctionExprent extends Exprent {
     tracer.addMapping(bytecode);
 
     if (funcType <= FUNCTION_USHR) {
-      return wrapOperandString(lstOperands.get(0), false, indent, tracer)
+      Exprent left = lstOperands.get(0);
+      Exprent right = lstOperands.get(1);
+
+      if (right.type == EXPRENT_CONST) {
+        ((ConstExprent) right).adjustConstType(left.getExprType());
+      }
+      else if (left.type == EXPRENT_CONST) {
+        ((ConstExprent) left).adjustConstType(right.getExprType());
+      }
+
+      return wrapOperandString(left, false, indent, tracer)
         .append(OPERATORS[funcType])
-        .append(wrapOperandString(lstOperands.get(1), true, indent, tracer));
+        .append(wrapOperandString(right, true, indent, tracer));
     }
 
       // try to determine more accurate type for 'char' literals
