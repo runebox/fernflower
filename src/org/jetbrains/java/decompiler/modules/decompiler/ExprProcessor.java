@@ -896,23 +896,25 @@ public class ExprProcessor implements CodeConstants {
 
     VarType rightType = exprent.getExprType();
 
-    TextBuffer res = exprent.toJava(indent, tracer);
-
     boolean cast =
       castAlways ||
       (!leftType.isSuperset(rightType) && (rightType.equals(VarType.VARTYPE_OBJECT) || leftType.type != CodeConstants.TYPE_OBJECT)) ||
       (castNull && rightType.type == CodeConstants.TYPE_NULL && !UNDEFINED_TYPE_STRING.equals(getTypeName(leftType))) ||
       (isIntConstant(exprent) && VarType.VARTYPE_INT.isStrictSuperset(leftType));
+      
+    boolean quote = cast && exprent.getPrecedence() >= FunctionExprent.getPrecedence(FunctionExprent.FUNCTION_CAST);
 
-    if (cast) {
-      if (exprent.getPrecedence() >= FunctionExprent.getPrecedence(FunctionExprent.FUNCTION_CAST)) {
-        res.enclose("(", ")");
-      }
+    if (cast) buffer.append('(').append(getCastTypeName(leftType)).append(')');
 
-      res.prepend("(" + getCastTypeName(leftType) + ")");
+    if (quote) buffer.append('(');
+
+    if (exprent.type == Exprent.EXPRENT_CONST) {
+      ((ConstExprent) exprent).adjustConstType(leftType);
     }
 
-    buffer.append(res);
+    buffer.append(exprent.toJava(indent, tracer));
+
+    if (quote) buffer.append(')');
 
     return cast;
   }

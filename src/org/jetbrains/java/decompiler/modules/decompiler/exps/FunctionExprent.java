@@ -454,12 +454,35 @@ public class FunctionExprent extends Exprent {
     tracer.addMapping(bytecode);
 
     if (funcType <= FUNCTION_USHR) {
-      return wrapOperandString(lstOperands.get(0), false, indent, tracer)
+      Exprent left = lstOperands.get(0);
+      Exprent right = lstOperands.get(1);
+
+      if (right.type == EXPRENT_CONST) {
+        ((ConstExprent) right).adjustConstType(left.getExprType());
+      }
+      else if (left.type == EXPRENT_CONST) {
+        ((ConstExprent) left).adjustConstType(right.getExprType());
+      }
+
+      return wrapOperandString(left, false, indent, tracer)
         .append(OPERATORS[funcType])
-        .append(wrapOperandString(lstOperands.get(1), true, indent, tracer));
+        .append(wrapOperandString(right, true, indent, tracer));
     }
 
+      // try to determine more accurate type for 'char' literals
     if (funcType >= FUNCTION_EQ) {
+      if (funcType <= FUNCTION_LE) {
+        Exprent left = lstOperands.get(0);
+        Exprent right = lstOperands.get(1);
+
+        if (right.type == EXPRENT_CONST) {
+          ((ConstExprent) right).adjustConstType(left.getExprType());
+        }
+        else if (left.type == EXPRENT_CONST) {
+          ((ConstExprent) left).adjustConstType(right.getExprType());
+        }
+      }
+
       return wrapOperandString(lstOperands.get(0), false, indent, tracer)
         .append(OPERATORS[funcType - FUNCTION_EQ + 11])
         .append(wrapOperandString(lstOperands.get(1), true, indent, tracer));
@@ -484,11 +507,21 @@ public class FunctionExprent extends Exprent {
         }
         return res.append(".length");
       case FUNCTION_IIF:
+        Exprent left = lstOperands.get(1);
+        Exprent right = lstOperands.get(2);
+
+        if (right.type == EXPRENT_CONST) {
+          ((ConstExprent) right).adjustConstType(left.getExprType());
+        }
+        else if (left.type == EXPRENT_CONST) {
+          ((ConstExprent) left).adjustConstType(right.getExprType());
+        }
+
         return wrapOperandString(lstOperands.get(0), true, indent, tracer)
-          .append("?")
-          .append(wrapOperandString(lstOperands.get(1), true, indent, tracer))
-          .append(":")
-          .append(wrapOperandString(lstOperands.get(2), true, indent, tracer));
+                .append("?")
+                .append(wrapOperandString(left, true, indent, tracer))
+                .append(":")
+                .append(wrapOperandString(right, true, indent, tracer));
       case FUNCTION_IPP:
         return wrapOperandString(lstOperands.get(0), true, indent, tracer).append("++");
       case FUNCTION_PPI:
