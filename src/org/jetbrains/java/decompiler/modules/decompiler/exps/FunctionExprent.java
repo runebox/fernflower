@@ -507,11 +507,21 @@ public class FunctionExprent extends Exprent {
         }
         return res.append(".length");
       case FUNCTION_IIF:
+        Exprent left = lstOperands.get(1);
+        Exprent right = lstOperands.get(2);
+
+        if (right.type == EXPRENT_CONST) {
+          ((ConstExprent) right).adjustConstType(left.getExprType());
+        }
+        else if (left.type == EXPRENT_CONST) {
+          ((ConstExprent) left).adjustConstType(right.getExprType());
+        }
+
         return wrapOperandString(lstOperands.get(0), true, indent, tracer)
-          .append("?")
-          .append(wrapOperandString(lstOperands.get(1), true, indent, tracer))
-          .append(":")
-          .append(wrapOperandString(lstOperands.get(2), true, indent, tracer));
+                .append("?")
+                .append(wrapOperandString(left, true, indent, tracer))
+                .append(":")
+                .append(wrapOperandString(right, true, indent, tracer));
       case FUNCTION_IPP:
         return wrapOperandString(lstOperands.get(0), true, indent, tracer).append("++");
       case FUNCTION_PPI:
