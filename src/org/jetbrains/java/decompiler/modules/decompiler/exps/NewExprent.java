@@ -362,7 +362,13 @@ public class NewExprent extends Exprent {
           for (int i = 0; i < newType.arrayDim; i++) {
             buf.append("[");
             if (i < lstDims.size()) {
-              buf.append(lstDims.get(i).toJava(indent, tracer));
+              Exprent dim = lstDims.get(i);
+
+              if (dim.type == Exprent.EXPRENT_CONST) {
+                ((ConstExprent) dim).setConstType(VarType.VARTYPE_INT);
+              }
+
+              buf.append(dim.toJava(indent, tracer));
             }
             buf.append("]");
           }
