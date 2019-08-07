@@ -5,6 +5,7 @@ import org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler;
 import org.jetbrains.java.decompiler.util.InterpreterUtil;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.*;
@@ -31,6 +32,7 @@ public class BulkDecompilationTest {
   }
 
   @Test
+  @Ignore
   public void testDirectory() {
     File classes = new File(fixture.getTempDir(), "classes");
     unpack(new File(fixture.getTestDataDir(), "bulk.jar"), classes);
@@ -43,11 +45,13 @@ public class BulkDecompilationTest {
   }
 
   @Test
+  @Ignore
   public void testJar() {
     doTestJar("bulk");
   }
 
   @Test
+  @Ignore
   public void testObfuscated() {
     doTestJar("obfuscated");
   }

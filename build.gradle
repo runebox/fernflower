@@ -1,5 +1,10 @@
+group = 'net.runelite'
+// Just update this manually like the pro you are
+version = '07082019'
+
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 apply plugin: 'java'
+apply plugin: 'maven'
 
 compileJava {
   sourceCompatibility '1.8'
@@ -18,7 +23,7 @@ dependencies {
 }
 
 jar {
-  archiveName 'fernflower.jar'
+  archiveName 'fernflower-' + project.version + '.jar'
   manifest {
     attributes 'Main-Class': 'org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler'
   }
