@@ -132,7 +132,7 @@ public class TextBuffer {
       sb.append(myStringBuilder.substring(lineStart, lineEnd));
       Set<Integer> integers = myLineMapping.get(count);
       if (integers != null) {
-        sb.append("//");
+        sb.append(" // L:");
         for (Integer integer : integers) {
           sb.append(' ').append(integer);
         }

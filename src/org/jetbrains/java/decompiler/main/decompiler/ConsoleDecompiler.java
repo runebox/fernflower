@@ -35,16 +35,10 @@ public class ConsoleDecompiler implements IBytecodeProvider, IResultSaver {
     for (int i = 0; i < args.length - 1; ++i) { // last parameter - destination
       String arg = args[i];
 
-      if (isOption && arg.length() > 5 && arg.charAt(0) == '-' && arg.charAt(4) == '=') {
-        String value = arg.substring(5);
-        if ("true".equalsIgnoreCase(value)) {
-          value = "1";
-        }
-        else if ("false".equalsIgnoreCase(value)) {
-          value = "0";
-        }
-
-        mapOptions.put(arg.substring(1, 4), value);
+      if (isOption && arg.length() > 5 && arg.charAt(0) == '-' && arg.charAt(arg.length() - 2) == '=') {
+        String value = arg.substring(arg.indexOf("=") + 1);
+        String target = arg.substring(1, arg.indexOf("="));
+        mapOptions.put(target, value);
       }
       else {
         isOption = false;
