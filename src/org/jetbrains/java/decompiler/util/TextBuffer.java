@@ -84,9 +84,6 @@ public class TextBuffer {
   public String toString() {
     String original = myStringBuilder.toString();
     if (myLineToOffsetMapping == null || myLineToOffsetMapping.isEmpty()) {
-      if (myLineMapping != null) {
-        return addOriginalLineNumbers();
-      }
       return original;
     }
     else {
