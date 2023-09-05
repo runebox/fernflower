@@ -43,9 +43,9 @@ public class AnnotationExprent extends Exprent {
       boolean oneLiner = type == ANNOTATION_SINGLE_ELEMENT || indent < 0;
 
       for (int i = 0; i < parNames.size(); i++) {
-        /*if (!oneLiner) {
-          buffer.appendLineSeparator().appendIndent(indent + 1);
-        }*/
+        if (!oneLiner) {
+          //buffer.appendLineSeparator().appendIndent(indent + 1);
+        }
 
         if (type != ANNOTATION_SINGLE_ELEMENT) {
           buffer.append(parNames.get(i));
@@ -55,13 +55,13 @@ public class AnnotationExprent extends Exprent {
         buffer.append(parValues.get(i).toJava(0, tracer));
 
         if (i < parNames.size() - 1) {
-          buffer.append(',');
+          buffer.append(", ");
         }
       }
 
-      /*if (!oneLiner) {
-        buffer.appendLineSeparator().appendIndent(indent);
-      }*/
+      if (!oneLiner) {
+        //buffer.appendLineSeparator().appendIndent(indent);
+      }
 
       buffer.append(')');
     }
